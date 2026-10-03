@@ -29,7 +29,7 @@
             position: relative;
         }
 
-        /* Background floating elements */
+        /* 100% fixed: background elements can no longer block clicks or taps */
         .bg-heart {
             position: absolute;
             font-size: 20px;
@@ -37,7 +37,7 @@
             animation: floatUp 6s linear infinite;
             bottom: -50px;
             z-index: 1;
-            pointer-events: none;
+            pointer-events: none !important;
         }
 
         @keyframes floatUp {
@@ -53,7 +53,6 @@
             }
         }
 
-        /* Interactive screens container */
         .container {
             width: 90%;
             max-width: 450px;
@@ -62,7 +61,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            z-index: 10;
+            z-index: 999; /* Forces the main content to the absolute front layer */
         }
 
         .screen {
@@ -96,11 +95,14 @@
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            z-index: 9999;
+            pointer-events: auto !important;
         }
+        
         .envelope-wrapper:hover {
             transform: translateY(-5px);
         }
-        /* Envelope flap */
+
         .envelope-wrapper::before {
             content: '';
             position: absolute;
@@ -114,13 +116,14 @@
             transform-origin: top;
             transition: transform 0.4s ease 0.2s;
             z-index: 5;
+            pointer-events: none;
         }
-        /* Open flap animation state */
+
         .envelope-wrapper.open::before {
             transform: rotateX(180deg);
             z-index: 1;
         }
-        /* Front pockets of envelope */
+
         .envelope-front {
             position: absolute;
             width: 0;
@@ -131,8 +134,9 @@
             bottom: 0;
             left: 0;
             z-index: 4;
+            pointer-events: none;
         }
-        /* Heart seal */
+
         .heart-seal {
             position: absolute;
             top: 80px;
@@ -141,16 +145,20 @@
             z-index: 6;
             transition: all 0.3s ease;
             animation: pulse 1.5s infinite;
+            pointer-events: none;
         }
+
         .envelope-wrapper.open .heart-seal {
             opacity: 0;
             transform: scale(0);
         }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.15); }
             100% { transform: scale(1); }
         }
+
         .tap-text {
             margin-top: 30px;
             color: var(--primary-pink);
@@ -158,7 +166,9 @@
             font-size: 16px;
             letter-spacing: 1px;
             animation: blink 1.5s infinite;
+            pointer-events: none;
         }
+
         @keyframes blink {
             50% { opacity: 0.3; }
         }
@@ -178,19 +188,23 @@
             text-align: center;
             border: 2px solid #fff0f3;
         }
+
         .letter-emoji {
             font-size: 50px;
             animation: sway 3s ease-in-out infinite;
         }
+
         @keyframes sway {
             0%, 100% { transform: rotate(-5deg); }
             50% { transform: rotate(5deg); }
         }
+
         .letter-title {
             color: var(--primary-pink);
             font-size: 24px;
             margin-top: 10px;
         }
+
         .letter-text {
             color: var(--text-color);
             font-size: 16px;
@@ -201,24 +215,17 @@
             overflow-y: auto;
             padding-right: 5px;
         }
-        /* Custom scrollbar for letter text if needed */
-        .letter-text::-webkit-scrollbar {
-            width: 4px;
-        }
-        .letter-text::-webkit-scrollbar-thumb {
-            background: var(--bg-color);
-            border-radius: 4px;
-        }
-        /* Buttons layout */
+
         .btn-group {
             position: relative;
             width: 100%;
-            height: 60px;
+            height: 80px;
             display: flex;
             justify-content: space-around;
             align-items: center;
             margin-top: auto;
         }
+
         .btn {
             padding: 12px 30px;
             border: none;
@@ -230,20 +237,24 @@
             transition: transform 0.2s, background-color 0.2s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
+
         #promiseBtn {
             background-color: var(--primary-pink);
             color: white;
             z-index: 100;
         }
+
         #promiseBtn:hover {
             background-color: var(--dark-pink);
             transform: scale(1.05);
         }
+
         #noBtn {
             background-color: #e9ecef;
             color: #6c757d;
             position: absolute;
-            transition: all 0.2s ease;
+            right: 40px;
+            transition: all 0.15s ease;
             z-index: 99;
         }
 
@@ -261,20 +272,24 @@
             align-items: center;
             text-align: center;
         }
+
         .celebration-emoji {
             font-size: 70px;
             margin-bottom: 25px;
             animation: bounce 2s infinite;
         }
+
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
         }
+
         .celebration-title {
             color: var(--primary-pink);
             font-size: 28px;
             margin-bottom: 15px;
         }
+
         .celebration-text {
             color: var(--text-color);
             font-size: 17px;
@@ -320,8 +335,9 @@
     </div>
 
     <script>
-        // Background continuous floating decorations
         const body = document.body;
         const emojis = ['❤️', '💖', '✨', '💝', '🌸', '💕'];
         
         function createBackgroundHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('bg-heart');
