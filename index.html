@@ -29,7 +29,6 @@
             position: relative;
         }
 
-        /* 100% fixed: background elements can no longer block clicks or taps */
         .bg-heart {
             position: absolute;
             font-size: 20px;
@@ -61,7 +60,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            z-index: 999; /* Forces the main content to the absolute front layer */
+            z-index: 999;
         }
 
         .screen {
@@ -72,7 +71,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s ease-in-out;
             opacity: 0;
             transform: scale(0.8);
             pointer-events: none;
@@ -114,7 +113,7 @@
             border-right: 140px solid transparent;
             border-top: 100px solid #ff85a1;
             transform-origin: top;
-            transition: transform 0.4s ease 0.2s;
+            transition: transform 0.4s ease;
             z-index: 5;
             pointer-events: none;
         }
@@ -341,3 +340,6 @@
         function createBackgroundHeart() {
             const heart = document.createElement('div');
             heart.classList.add('bg-heart');
+            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
