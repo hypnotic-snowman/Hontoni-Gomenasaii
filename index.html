@@ -3,15 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You ❤️</title>
+    <title>I'm Sorry ❤️</title>
     <style>
-        :root {
-            --bg-color: #ffeef2;
-            --primary-pink: #ff6b8b;
-            --dark-pink: #e04d70;
-            --text-color: #4a4a4a;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,90 +13,36 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            height: 100vh;
+            background-color: #ffeef2;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             overflow: hidden;
-            position: relative;
+            perspective: 1000px;
         }
 
-        .bg-heart {
-            position: absolute;
-            font-size: 20px;
-            color: rgba(255, 107, 139, 0.4);
-            animation: floatUp 6s linear infinite;
-            bottom: -50px;
-            z-index: 1;
-            pointer-events: none !important;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% {
-                transform: translateY(-105vh) translateX(var(--random-x, 50px)) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .container {
-            width: 90%;
-            max-width: 450px;
-            height: 550px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 999;
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.5s ease-in-out;
-            opacity: 0;
-            transform: scale(0.8);
-            pointer-events: none;
-        }
-
-        .screen.active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-        }
-
-        /* --- PAGE 1: ENVELOPE --- */
-        .envelope-wrapper {
+        /* Envelope Styling */
+        .envelope-container {
             position: relative;
             width: 280px;
-            height: 180px;
-            background-color: #ffb3c6;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            height: 200px;
+            background: #ffb3c1;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            z-index: 9999;
-            pointer-events: auto !important;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transition: transform 0.5s ease;
+            transform-style: preserve-3d;
+            z-index: 100;
         }
-        
-        .envelope-wrapper:hover {
+
+        .envelope-container:hover {
             transform: translateY(-5px);
         }
 
-        .envelope-wrapper::before {
-            content: '';
+        /* Top Flap */
+        .flap {
             position: absolute;
             top: 0;
             left: 0;
@@ -111,235 +50,272 @@
             height: 0;
             border-left: 140px solid transparent;
             border-right: 140px solid transparent;
-            border-top: 100px solid #ff85a1;
+            border-top: 110px solid #ff8093;
             transform-origin: top;
-            transition: transform 0.4s ease;
-            z-index: 5;
-            pointer-events: none;
+            transition: transform 0.4s ease 0.2s, z-index 0.2s ease 0.2s;
+            z-index: 4;
         }
 
-        .envelope-wrapper.open::before {
-            transform: rotateX(180deg);
-            z-index: 1;
-        }
-
-        .envelope-front {
+        /* Envelope Pockets to hide letter */
+        .pocket {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 0;
             height: 0;
-            border-left: 140px solid #ffc2d1;
-            border-right: 140px solid #ffc2d1;
-            border-bottom: 90px solid #ffccd5;
-            bottom: 0;
-            left: 0;
-            z-index: 4;
-            pointer-events: none;
+            border-left: 140px solid #ff99aa;
+            border-right: 140px solid #ff99aa;
+            border-bottom: 100px solid #ff8093;
+            border-top: 100px solid transparent;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            z-index: 3;
+        }
+
+        /* The Letter Inside */
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 250px;
+            height: 180px;
+            background: #ffffff;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            transition: transform 0.6s ease;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .letter p {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.4;
         }
 
         .heart-seal {
             position: absolute;
-            top: 80px;
+            top: 85px;
             left: 125px;
-            font-size: 32px;
-            z-index: 6;
-            transition: all 0.3s ease;
-            animation: pulse 1.5s infinite;
-            pointer-events: none;
+            font-size: 30px;
+            z-index: 5;
+            transition: transform 0.4s ease;
+            transform: translate(-50%, -50%);
         }
 
-        .envelope-wrapper.open .heart-seal {
+        /* Open State Animations */
+        .envelope-container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+            transition: transform 0.4s ease, z-index 0.2s ease 0.2s;
+        }
+
+        .envelope-container.open .heart-seal {
+            transform: translate(-50%, -140px) scale(0);
             opacity: 0;
-            transform: scale(0);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+        .envelope-container.open .letter {
+            transform: translateY(-130px);
+            z-index: 5;
+            height: auto;
+            min-height: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
-        .tap-text {
-            margin-top: 30px;
-            color: var(--primary-pink);
-            font-weight: 600;
-            font-size: 16px;
-            letter-spacing: 1px;
-            animation: blink 1.5s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0.3; }
-        }
-
-        /* --- PAGE 2: THE LETTER & BUTTONS --- */
-        .letter-card {
+        /* Main Game/Apology Screen (hidden initially) */
+        .main-card {
+            display: none;
             background: white;
-            width: 100%;
-            height: 100%;
+            padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(255, 107, 139, 0.15);
-            padding: 35px 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.15);
             text-align: center;
-            border: 2px solid #fff0f3;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10;
+            animation: fadeIn 0.6s ease forwards;
         }
 
-        .letter-emoji {
-            font-size: 50px;
-            animation: sway 3s ease-in-out infinite;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        @keyframes sway {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-        }
-
-        .letter-title {
-            color: var(--primary-pink);
-            font-size: 24px;
-            margin-top: 10px;
-        }
-
-        .letter-text {
-            color: var(--text-color);
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 20px 0;
-            font-weight: 500;
-            max-height: 220px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .btn-group {
-            position: relative;
-            width: 100%;
-            height: 80px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            outline: none;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-
-        #promiseBtn {
-            background-color: var(--primary-pink);
-            color: white;
-            z-index: 100;
-        }
-
-        #promiseBtn:hover {
-            background-color: var(--dark-pink);
-            transform: scale(1.05);
-        }
-
-        #noBtn {
-            background-color: #e9ecef;
-            color: #6c757d;
-            position: absolute;
-            right: 40px;
-            transition: all 0.15s ease;
-            z-index: 99;
-        }
-
-        /* --- PAGE 3: CELEBRATION --- */
-        .celebration-card {
-            background: white;
-            width: 100%;
-            height: 100%;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(255, 107, 139, 0.15);
-            padding: 40px 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .celebration-emoji {
+        .sad-bear {
             font-size: 70px;
-            margin-bottom: 25px;
-            animation: bounce 2s infinite;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: slowSwing 3s ease infinite;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+        @keyframes slowSwing {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-8deg); }
         }
 
-        .celebration-title {
-            color: var(--primary-pink);
-            font-size: 28px;
+        h1 {
+            color: #ff4b6e;
+            font-size: 24px;
             margin-bottom: 15px;
         }
 
-        .celebration-text {
-            color: var(--text-color);
-            font-size: 17px;
-            font-weight: 500;
+        .message {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            height: 80px;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        #yesBtn {
+            background-color: #ff4b6e;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 75, 110, 0.3);
+            z-index: 10;
+        }
+
+        #yesBtn:hover {
+            background-color: #ff3358;
+        }
+
+        #noBtn {
+            background-color: #ececec;
+            color: #777;
+            position: absolute;
+            right: 20px;
+            z-index: 5;
+            transition: all 0.15s ease;
+        }
+
+        /* Success screen styling */
+        .success-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .success-screen h2 {
+            color: #ff4b6e;
+            margin-bottom: 15px;
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: absolute;
+            color: #ff4b6e;
+            font-size: 20px;
+            pointer-events: none !important;
+            animation: floatUp 4s linear infinite;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- PAGE 1: THE ENVELOPE -->
-        <div class="screen active" id="page1">
-            <div class="envelope-wrapper" id="envelope">
-                <div class="envelope-front"></div>
-                <div class="heart-seal">❤️</div>
+    <!-- STEP 1: Clickable Envelope Opening -->
+    <div class="envelope-container" id="envelope" onclick="openEnvelope()" ontouchend="openEnvelope()">
+        <div class="flap"></div>
+        <div class="heart-seal">❤️</div>
+        <div class="pocket"></div>
+        <div class="letter">
+            <p style="font-weight: bold; color: #ff4b6e; margin-bottom: 5px;">To My Favorite Person,</p>
+            <p>I am really sorry about earlier... 🥺</p>
+            <p style="font-size: 11px; margin-top: 10px; color: #999;">(Tap the envelope to open)</p>
+        </div>
+    </div>
+
+    <!-- STEP 2: The Apology Card -->
+    <div class="main-card" id="mainCard">
+        <div id="gameContent">
+            <div class="sad-bear">🥺<span>💐</span></div>
+            <h1>Promise korbi?</h1>
+            <p class="message">I'm sorryyyy, ami hudai bolselam, was just joking. Eigula mone rakhis na and promise kor je eita then pakistani naki ki ki jani oigula o r bolbi na.. bez i only love you and only you, no one else 👉👈</p>
+            
+            <div class="btn-container">
+                <button id="yesBtn" onclick="forgiven()">Promise</button>
+                <button id="noBtn" onmouseover="moveNoButton()" onclick="moveNoButton()">No</button>
             </div>
-            <p class="tap-text">TAP ENVELOPE TO OPEN</p>
         </div>
 
-        <!-- PAGE 2: THE APOLOGY LETTER -->
-        <div class="screen" id="page2">
-            <div class="letter-card">
-                <div class="letter-emoji">🥺💐</div>
-                <h1 class="letter-title">I'm So Sorry...</h1>
-                <p class="letter-text">
-                    I'm sorryyyy, ami hudai bolselam, was just joking. eigula mone rakhis na and promise kor je eita then pakistani naki ki ki jani oigula o r bolbi na.. bez i only love you and only you, no one else
-                </p>
-                <div class="btn-group">
-                    <button class="btn" id="promiseBtn">Promise</button>
-                    <button class="btn" id="noBtn">No</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- PAGE 3: THE CELEBRATION -->
-        <div class="screen" id="page3">
-            <div class="celebration-card">
-                <div class="celebration-emoji">💖✨🥰</div>
-                <h1 class="celebration-title">Thank You!</h1>
-                <p class="celebration-text">Yay! Best promise ever. I love you the absolute most, forever and ever! 🧸❤️</p>
-            </div>
+        <!-- STEP 3: Success State -->
+        <div id="successContent" class="success-screen">
+            <div style="font-size: 70px; margin-bottom: 15px;">💖🥰✨</div>
+            <h2>Thank You! ❤️</h2>
+            <p class="message">Yay! Best promise ever. I love you the absolute most, forever and ever! 🧸❤️</p>
         </div>
     </div>
 
     <script>
-        const body = document.body;
-        const emojis = ['❤️', '💖', '✨', '💝', '🌸', '💕'];
-        
-        function createBackgroundHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('bg-heart');
-            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+        // Open envelope and trigger card entry
+        function openEnvelope() {
+            const env = document.getElementById('envelope');
+            env.classList.add('open');
+            
+            // Wait for letter transition to complete, then slide it out to the main card
+            setTimeout(() => {
+                env.style.display = 'none';
+                document.getElementById('mainCard').style.display = 'block';
+                startHearts();
+            }, 1200);
+        }
+
+        // Runaway "No" Button
+        let noClicks = 0;
+        function moveNoButton(e) {
+            if (e) e.preventDefault();
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const container = document.querySelector('.btn-container');
+            
+            const maxX = container.clientWidth - noBtn.clientWidth;
+            
+            // Push button completely away dynamically across the zone
+            const randomX = Math.random() * maxX;
+            const randomY = (Math.random() * 120) - 60;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Make the yes button slightly bigger every time they try to hit "no"
+            noClicks++;
+            const currentScale = 1 + (noClicks * 0.15);
+            yesBtn.style.transform = `scale(${currentScale})`;
+        }
+
+        // Add specialized mobile touch configuration for escaping button
+        const noBtnElement = document.getElementById('noBtn');
+        noBtnElement.addEventListener('touchstart', moveNoButton);
+
+        // Action when "Yes" is clicked
+        function forgiven() {
+            document.getElementById('gameContent').style.display = 'none';
